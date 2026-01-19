@@ -19,66 +19,73 @@ void ButtonManager::begin() {
 void ButtonManager::update() {
     unsigned long currentTime = millis();
     
-    // Reset press flags
-    holdPressed = false;
-    tarePressed = false;
-    modePressed = false;
-    
     // Read button states
     bool currentHold = digitalRead(HOLD_PIN);
     bool currentTare = digitalRead(TARE_PIN);
     bool currentMode = digitalRead(MODE_SWITCH_PIN);
     
-    // HOLD button
+    // HOLD button (debounced tap detection that fires once while held)
     if (currentHold != lastHoldButtonState) {
         lastHoldTime = currentTime;
+        lastHoldButtonState = currentHold;
     }
-    
     if ((currentTime - lastHoldTime) > debounceDelay) {
-        if (currentHold == LOW && lastHoldButtonState == HIGH) {
-            holdPressed = true;
+        if (currentHold == LOW && !holdActive) {
+            holdActive = true;
+            holdPressed = true; // latch until consumed
             Serial.println("Button HOLD pressed");
+        } else if (currentHold == HIGH && holdActive) {
+            holdActive = false; // ready for next press
         }
     }
-    lastHoldButtonState = currentHold;
-    
+
     // TARE button
     if (currentTare != lastTareButtonState) {
         lastTareTime = currentTime;
+        lastTareButtonState = currentTare;
     }
-    
     if ((currentTime - lastTareTime) > debounceDelay) {
-        if (currentTare == LOW && lastTareButtonState == HIGH) {
+        if (currentTare == LOW && !tareActive) {
+            tareActive = true;
             tarePressed = true;
             Serial.println("Button TARE pressed");
+        } else if (currentTare == HIGH && tareActive) {
+            tareActive = false;
         }
     }
-    lastTareButtonState = currentTare;
-    
+
     // MODE button
     if (currentMode != lastModeButtonState) {
         lastModeTime = currentTime;
+        lastModeButtonState = currentMode;
     }
-    
     if ((currentTime - lastModeTime) > debounceDelay) {
-        if (currentMode == LOW && lastModeButtonState == HIGH) {
+        if (currentMode == LOW && !modeActive) {
+            modeActive = true;
             modePressed = true;
             Serial.println("Button MODE pressed");
+        } else if (currentMode == HIGH && modeActive) {
+            modeActive = false;
         }
     }
-    lastModeButtonState = currentMode;
 }
 
 bool ButtonManager::isHoldPressed() {
-    return holdPressed;
+    bool wasPressed = holdPressed;
+    holdPressed = false;
+    return wasPressed;
 }
 
 bool ButtonManager::isTarePressed() {
-    return tarePressed;
+    bool wasPressed = tarePressed;
+    tarePressed = false;
+    return wasPressed;
 }
 
 bool ButtonManager::isModePressed() {
-    return modePressed;
+    bool wasPressed = modePressed;
+    modePressed = false;
+    return wasPressed;
 }
 
 void ButtonManager::resetPresses() {

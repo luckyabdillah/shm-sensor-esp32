@@ -28,11 +28,17 @@ private:
     bool holdPressed = false;
     bool tarePressed = false;
     bool modePressed = false;
+
+    // Latched active state so a short tap isn't missed
+    bool holdActive = false;
+    bool tareActive = false;
+    bool modeActive = false;
     
 public:
     void begin();
     void update();
     
+    // Returns true once per physical press and consumes the latched flag
     bool isHoldPressed();
     bool isTarePressed();
     bool isModePressed();

@@ -22,7 +22,7 @@ DisplayManager display;
 ButtonManager buttons;
 FirebaseManager firebase;
 
-SensorMode currentMode = MODE_STRAIN_GAUGE;
+SensorMode currentMode = MODE_LOAD_CELL;
 unsigned long lastSend = 0;
 const unsigned long sendInterval = 5000;
 
@@ -76,6 +76,20 @@ void setup() {
     
     // Initialize semua komponen
     buttons.begin();
+    #if DEBUG_BUTTONS
+    Serial.println("\n[BUTTON DEBUG] Tekan tombol, baca raw level (LOW = ditekan)");
+    unsigned long _t0 = millis();
+    while (millis() - _t0 < 5000) {
+        int h = digitalRead(BTN_HOLD_PIN);
+        int t = digitalRead(BTN_TARE_PIN);
+        int m = digitalRead(BTN_MODE_PIN);
+        Serial.print("H/T/M: ");
+        Serial.print(h); Serial.print("/");
+        Serial.print(t); Serial.print("/");
+        Serial.println(m);
+        delay(250);
+    }
+    #endif
     loadCell.begin();
     strainGauge.begin();
     firebase.begin();
