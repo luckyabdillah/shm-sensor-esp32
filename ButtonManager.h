@@ -10,13 +10,15 @@ private:
     static const int TARE_PIN = BTN_TARE_PIN;
     static const int MODE_SWITCH_PIN = BTN_MODE_PIN;
     
-    // Button states
+    // Button states (current debounced)
     bool holdButtonState = HIGH;
     bool tareButtonState = HIGH;
     bool modeButtonState = HIGH;
-    bool lastHoldButtonState = HIGH;
-    bool lastTareButtonState = HIGH;
-    bool lastModeButtonState = HIGH;
+    
+    // Last confirmed stable states
+    bool lastHoldButtonState = HIGH;    // For state-change detection
+    bool lastTareButtonState = HIGH;    // For edge detection
+    bool lastModeButtonState = HIGH;    // For edge detection
     
     // Timers for debounce
     unsigned long lastHoldTime = 0;
@@ -24,13 +26,12 @@ private:
     unsigned long lastModeTime = 0;
     const unsigned long debounceDelay = 50;
     
-    // Press detection
+    // Press detection flags
     bool holdPressed = false;
     bool tarePressed = false;
     bool modePressed = false;
 
-    // Latched active state so a short tap isn't missed
-    bool holdActive = false;
+    // Edge detection state for momentary buttons (TARE, MODE)
     bool tareActive = false;
     bool modeActive = false;
     

@@ -24,18 +24,19 @@ void ButtonManager::update() {
     bool currentTare = digitalRead(TARE_PIN);
     bool currentMode = digitalRead(MODE_SWITCH_PIN);
     
-    // HOLD button (debounced tap detection that fires once while held)
-    if (currentHold != lastHoldButtonState) {
+    // HOLD button (state-change detection for latching button)
+    // Detects any state transition (depressed↔released) and triggers toggle once
+    if (currentHold != holdButtonState) {
         lastHoldTime = currentTime;
-        lastHoldButtonState = currentHold;
+        holdButtonState = currentHold;
     }
     if ((currentTime - lastHoldTime) > debounceDelay) {
-        if (currentHold == LOW && !holdActive) {
-            holdActive = true;
-            holdPressed = true; // latch until consumed
-            Serial.println("Button HOLD pressed");
-        } else if (currentHold == HIGH && holdActive) {
-            holdActive = false; // ready for next press
+        if (holdButtonState != lastHoldButtonState) {
+            // State changed! Trigger toggle
+            holdPressed = true;
+            Serial.print("Button HOLD state: ");
+            Serial.println(holdButtonState == LOW ? "LATCHED (in)" : "RELEASED (out)");
+            lastHoldButtonState = holdButtonState;
         }
     }
 
