@@ -8,23 +8,15 @@ void FirebaseManager::begin() {
     auth.user.email = userEmail;
     auth.user.password = userPassword;
 
-    // First try to sign up with email/password (only needed once).
-    bool signupOk = Firebase.signUp(&config, &auth, userEmail, userPassword);
-    if (!signupOk) {
-        // If the user already exists, continue with the provided credentials.
-        if (config.signer.signupError.message.indexOf("EMAIL_EXISTS") == -1) {
-            Serial.printf("Firebase signup error: %s\n", config.signer.signupError.message.c_str());
-        }
-    }
-
     Firebase.begin(&config, &auth);
     Firebase.reconnectWiFi(true);
-    initialized = Firebase.ready();
 
-    if (initialized) {
+    if (Firebase.ready()) {
         Serial.println("Firebase connected");
+        initialized = true;
     } else {
-        Serial.println("Firebase not ready, check API key / email / password / DB rules");
+        Serial.printf("Firebase connection failed: %s\n", fbdo.errorReason().c_str());
+        initialized = false;
     }
 }
 

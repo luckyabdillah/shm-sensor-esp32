@@ -4,6 +4,16 @@ void ButtonManager::begin() {
     pinMode(HOLD_PIN, INPUT_PULLUP);
     pinMode(TARE_PIN, INPUT_PULLUP);
     pinMode(MODE_SWITCH_PIN, INPUT_PULLUP);
+
+    // Initialize last states based on actual pin levels to avoid false triggers
+    lastHoldButtonState = digitalRead(HOLD_PIN);
+    lastTareButtonState = digitalRead(TARE_PIN);
+    lastModeButtonState = digitalRead(MODE_SWITCH_PIN);
+
+    Serial.print("Buttons on pins H/T/M: ");
+    Serial.print(HOLD_PIN); Serial.print("/");
+    Serial.print(TARE_PIN); Serial.print("/");
+    Serial.println(MODE_SWITCH_PIN);
 }
 
 void ButtonManager::update() {
