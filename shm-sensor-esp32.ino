@@ -12,7 +12,7 @@ const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASS;
 
 // =============== TIME ===================
-const char* ntpServer = "pool.ntp.org";
+const char* ntpServer = "time.google.com";
 const long  gmtOffset_sec = 7*3600; // GMT+7
 const int   daylightOffset_sec = 0;
 
