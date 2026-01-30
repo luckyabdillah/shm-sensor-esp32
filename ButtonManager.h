@@ -12,13 +12,13 @@ private:
     
     // Button states (current debounced)
     bool holdButtonState = HIGH;
-    bool tareButtonState = HIGH;
-    bool modeButtonState = HIGH;
-    
-    // Last confirmed stable states
     bool lastHoldButtonState = HIGH;    // For state-change detection
-    bool lastTareButtonState = HIGH;    // For edge detection
-    bool lastModeButtonState = HIGH;    // For edge detection
+    
+    bool lastTareButtonState = HIGH;    // Current raw state
+    bool taredebouncedState = HIGH;     // Debounced state
+    
+    bool lastModeButtonState = HIGH;    // Current raw state
+    bool modeDebouncedState = HIGH;     // Debounced state
     
     // Timers for debounce
     unsigned long lastHoldTime = 0;
@@ -30,10 +30,6 @@ private:
     bool holdPressed = false;
     bool tarePressed = false;
     bool modePressed = false;
-
-    // Edge detection state for momentary buttons (TARE, MODE)
-    bool tareActive = false;
-    bool modeActive = false;
     
 public:
     void begin();

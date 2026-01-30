@@ -5,10 +5,19 @@ void ButtonManager::begin() {
     pinMode(TARE_PIN, INPUT_PULLUP);
     pinMode(MODE_SWITCH_PIN, INPUT_PULLUP);
 
-    // Initialize last states based on actual pin levels to avoid false triggers
-    lastHoldButtonState = digitalRead(HOLD_PIN);
-    lastTareButtonState = digitalRead(TARE_PIN);
-    lastModeButtonState = digitalRead(MODE_SWITCH_PIN);
+    // Initialize all states based on actual pin levels to avoid false triggers
+    bool holdPin = digitalRead(HOLD_PIN);
+    bool tarePin = digitalRead(TARE_PIN);
+    bool modePin = digitalRead(MODE_SWITCH_PIN);
+    
+    holdButtonState = holdPin;
+    lastHoldButtonState = holdPin;
+    
+    lastTareButtonState = tarePin;
+    taredebouncedState = tarePin;
+    
+    lastModeButtonState = modePin;
+    modeDebouncedState = modePin;
 
     Serial.print("Buttons on pins H/T/M: ");
     Serial.print(HOLD_PIN); Serial.print("/");
@@ -24,50 +33,52 @@ void ButtonManager::update() {
     bool currentTare = digitalRead(TARE_PIN);
     bool currentMode = digitalRead(MODE_SWITCH_PIN);
     
-    // HOLD button (state-change detection for latching button)
-    // Detects any state transition (depressed↔released) and triggers toggle once
+    // ========== HOLD button (toggle/latch button) ==========
+    // Detects state transitions and triggers toggle
     if (currentHold != holdButtonState) {
-        lastHoldTime = currentTime;
         holdButtonState = currentHold;
+        lastHoldTime = currentTime;
     }
-    if ((currentTime - lastHoldTime) > debounceDelay) {
+    // Apply debounce: check if enough time passed since last change
+    if ((currentTime - lastHoldTime) >= debounceDelay) {
         if (holdButtonState != lastHoldButtonState) {
-            // State changed! Trigger toggle
             holdPressed = true;
+            lastHoldButtonState = holdButtonState;
             Serial.print("Button HOLD state: ");
             Serial.println(holdButtonState == LOW ? "LATCHED (in)" : "RELEASED (out)");
-            lastHoldButtonState = holdButtonState;
         }
     }
 
-    // TARE button
+    // ========== TARE button (momentary button) ==========
+    // Detect transition from HIGH to LOW (button press)
     if (currentTare != lastTareButtonState) {
+        taredebouncedState = lastTareButtonState;
         lastTareTime = currentTime;
         lastTareButtonState = currentTare;
     }
-    if ((currentTime - lastTareTime) > debounceDelay) {
-        if (currentTare == LOW && !tareActive) {
-            tareActive = true;
+    // Apply debounce and detect LOW state
+    if ((currentTime - lastTareTime) >= debounceDelay) {
+        if (currentTare == LOW && taredebouncedState == HIGH) {
             tarePressed = true;
             Serial.println("Button TARE pressed");
-        } else if (currentTare == HIGH && tareActive) {
-            tareActive = false;
         }
+        taredebouncedState = currentTare;
     }
 
-    // MODE button
+    // ========== MODE button (momentary button) ==========
+    // Detect transition from HIGH to LOW (button press)
     if (currentMode != lastModeButtonState) {
+        modeDebouncedState = lastModeButtonState;
         lastModeTime = currentTime;
         lastModeButtonState = currentMode;
     }
-    if ((currentTime - lastModeTime) > debounceDelay) {
-        if (currentMode == LOW && !modeActive) {
-            modeActive = true;
+    // Apply debounce and detect LOW state
+    if ((currentTime - lastModeTime) >= debounceDelay) {
+        if (currentMode == LOW && modeDebouncedState == HIGH) {
             modePressed = true;
             Serial.println("Button MODE pressed");
-        } else if (currentMode == HIGH && modeActive) {
-            modeActive = false;
         }
+        modeDebouncedState = currentMode;
     }
 }
 
