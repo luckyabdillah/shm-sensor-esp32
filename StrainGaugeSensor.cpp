@@ -57,12 +57,12 @@ void StrainGaugeSensor::tare() {
 
     const int samples = 400;
     long sum = 0;
-    long sumSq = 0;
+    uint64_t sumSq = 0;
 
     for (int i = 0; i < samples; i++) {
         int adc = analogRead(SENSOR_PIN);
         sum += adc;
-        sumSq += (long)adc * adc;
+        sumSq += (uint64_t)adc * adc;
         delay(5);
     }
 
