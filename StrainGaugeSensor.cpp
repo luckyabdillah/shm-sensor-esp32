@@ -30,7 +30,7 @@ void StrainGaugeSensor::update() {
         if (abs(adcNet) < noiseThresholdAdc) adcNet = 0;
 
         Vout = adcNet * Vref / ADC_MAX;
-        Vr = Vout / (Vref * gain);
+        Vr = Vout / (Vin * gain);
         strain = (4 * Vr) / (gf * (1 + 2 * Vr));
 
         deltaL = strain * panjangPlat;

@@ -12,6 +12,7 @@ private:
     
     // Constants
     const float Vref = 3.3;
+    const float Vin = 5.0;
     const int ADC_MAX = 4095;
     const float STRAIN_MAX = 0.0008;
     const float gain = 1215.34;
