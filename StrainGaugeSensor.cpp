@@ -219,9 +219,7 @@ void StrainGaugeSensor::printSerialOutput() const {
     Serial.println();
 
     Serial.print("Pertambahan Panjang (ΔL) : ");
-    Serial.print(getDeltaL(), 9);
-    Serial.print(" m  |  ");
-    Serial.print(getDeltaL() * 1000, 3);
+    Serial.print(getDeltaL(), 6);
     Serial.println(" mm");
 
     Serial.print("Tegangan / Stress        : ");

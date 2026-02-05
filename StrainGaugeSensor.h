@@ -17,7 +17,7 @@ private:
     const float STRAIN_MAX = 0.0008;
     const float gain = 1215.34;
     const float gf = 2.14;
-    const float panjangPlat = 0.5;
+    const float panjangPlat = 500.0f;
     const float modulusE = 200e9;
     
     // Variables
