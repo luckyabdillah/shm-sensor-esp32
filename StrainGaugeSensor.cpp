@@ -114,9 +114,9 @@ float StrainGaugeSensor::calculateLoadPercent(float strain) {
 
 SystemStatus StrainGaugeSensor::getStatus() const {
     float currentLoad = holdMode ? holdLoadPercent : loadPercent;
-    if (currentLoad >= 90) return STATUS_DANGER;
-    if (currentLoad >= 70) return STATUS_WARNING;
-    if (currentLoad >= 50) return STATUS_NOTICE;
+    if (currentLoad >= 80) return STATUS_DANGER;
+    if (currentLoad >= 40) return STATUS_WARNING;
+    if (currentLoad >= 30) return STATUS_NOTICE;
     return STATUS_NORMAL;
 }
 
