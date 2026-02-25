@@ -18,7 +18,7 @@ private:
     const float gain = 1215.34;
     const float gf = 2.14;
     const float panjangPlat = 500.0f;
-    const float modulusE = 200e9;
+    const float modulusE = 100e9;
     
     // Variables
     float adcAvg = 0;
