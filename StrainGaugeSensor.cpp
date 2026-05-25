@@ -1,5 +1,8 @@
 #include "StrainGaugeSensor.h"
 #include <Arduino.h>
+#include "DisplayManager.h"
+
+extern DisplayManager display;
 
 void StrainGaugeSensor::begin() {
     pinMode(BUZZER_PIN, OUTPUT);
@@ -51,6 +54,9 @@ void StrainGaugeSensor::update() {
 void StrainGaugeSensor::tare() {
     isTaring = true;
 
+    // Show loading message on LCD while sampling
+    display.showMessage("TARE STRAIN GAUGE", "Loading...");
+
     Serial.println("\n=== TARE STRAIN GAUGE START ===");
     Serial.println("Pastikan beban = 0 dan plat diam...");
     delay(1000);
@@ -83,6 +89,9 @@ void StrainGaugeSensor::tare() {
     Serial.print("Offset ADC       : "); Serial.println(offsetAdc, 3);
     Serial.print("Noise ADC (σ)    : "); Serial.println(noiseAdc, 3);
     Serial.print("Threshold ADC    : "); Serial.println(noiseThresholdAdc, 3);
+
+    // Clear loading message after sampling
+    display.clear();
 
     isTaring = false;
 }
